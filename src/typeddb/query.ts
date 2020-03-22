@@ -54,7 +54,7 @@ type Or<Type extends Schema> = LogicalComparator<Type>;
 export const or = <Type extends Schema>(
     leftComparator: Comparator<Type>,
     rightComparator: Comparator<Type>,
-): And<Type> => ({
+): Or<Type> => ({
     kind: 'or',
     leftComparator,
     rightComparator,
