@@ -34,10 +34,7 @@ describe('Query Type', () => {
     });
 
     test('should return or logical comparator structure', () => {
-        const orLogicalQuery: Query<Schema> = or(
-            less('updatedAt', '23/03/2020'),
-            greater('updatedAt', '18/02/2020'),
-        );
+        const orLogicalQuery: Query<Schema> = or(less('updatedAt', '23/03/2020'), greater('updatedAt', '18/02/2020'));
         expect(orLogicalQuery).toBeDefined();
         expect(orLogicalQuery.leftComparator.kind).toEqual('less');
         expect(orLogicalQuery.rightComparator.kind).toEqual('greater');

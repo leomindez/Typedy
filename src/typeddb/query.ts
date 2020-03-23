@@ -61,4 +61,3 @@ export const or = <Type extends Schema>(leftComparator: Query<Type>, rightCompar
 });
 
 export type Query<Type extends Schema> = Equal<Type> | Greater<Type> | Less<Type> | And<Type> | Or<Type>;
-
