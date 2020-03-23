@@ -34,12 +34,12 @@ describe('Query Type', () => {
     });
 
     test('return or logical comparator structure', () => {
-        const andLogicalComparator: Query<Schema> = or(
+        const orLogicalComparator: Query<Schema> = or(
             less('updatedAt', '23/03/2020'),
             greater('updatedAt', '18/02/2020'),
         );
-        expect(andLogicalComparator).toBeDefined();
-        expect(andLogicalComparator.leftComparator.kind).toEqual('less');
-        expect(andLogicalComparator.rightComparator.kind).toEqual('greater');
+        expect(orLogicalComparator).toBeDefined();
+        expect(orLogicalComparator.leftComparator.kind).toEqual('less');
+        expect(orLogicalComparator.rightComparator.kind).toEqual('greater');
     });
 });
