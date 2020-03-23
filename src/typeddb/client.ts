@@ -13,10 +13,8 @@ export class Client<Type extends Schema> implements Transaction<Type> {
         this.configuration = configuration;
     }
 
-    async find(): Promise<Type | undefined> {
-        throw new Error();
-
-        /* const id = operation.id;
+    async find(item: Type): Promise<Type | undefined> {
+        const id = item.id;
         const { Item } = await this.documentClient
             .get({
                 TableName: this.configuration.table,
@@ -24,7 +22,7 @@ export class Client<Type extends Schema> implements Transaction<Type> {
             })
             .promise();
 
-        return Item as Type; */
+        return Item as Type; 
     }
 
     async insert(): Promise<Type> {
