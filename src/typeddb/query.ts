@@ -1,20 +1,10 @@
 import { Schema } from './schema';
 
-export type Operator = {
-    kind: string;
-};
-
-interface Comparator<Type extends Schema> extends Operator {
+type Equal<Type extends Schema> = {
+    kind: 'equal';
     key: keyof Type;
     value: Type[keyof Type];
-}
-
-interface LogicalComparator<Type extends Schema> extends Operator {
-    leftComparator: Comparator<Type>;
-    rightComparator: Comparator<Type>;
-}
-
-type Equal<Type extends Schema> = Comparator<Type>;
+};
 
 export const equal = <Type extends Schema>(key: keyof Type, value: Type[keyof Type]): Equal<Type> => ({
     kind: 'equal',
@@ -22,7 +12,11 @@ export const equal = <Type extends Schema>(key: keyof Type, value: Type[keyof Ty
     value,
 });
 
-type Greater<Type extends Schema> = Comparator<Type>;
+type Greater<Type extends Schema> = {
+    kind: 'greater';
+    key: keyof Type;
+    value: Type[keyof Type];
+};
 
 export const greater = <Type extends Schema>(key: keyof Type, value: Type[keyof Type]): Greater<Type> => ({
     kind: 'greater',
@@ -30,7 +24,11 @@ export const greater = <Type extends Schema>(key: keyof Type, value: Type[keyof 
     value,
 });
 
-type Less<Type extends Schema> = Comparator<Type>;
+type Less<Type extends Schema> = {
+    kind: 'less';
+    key: keyof Type;
+    value: Type[keyof Type];
+};
 
 export const less = <Type extends Schema>(key: keyof Type, value: Type[keyof Type]): Less<Type> => ({
     kind: 'less',
@@ -38,28 +36,29 @@ export const less = <Type extends Schema>(key: keyof Type, value: Type[keyof Typ
     value,
 });
 
-type And<Type extends Schema> = LogicalComparator<Type>;
+type And<Type extends Schema> = {
+    kind: 'and';
+    leftComparator: Query<Type>;
+    rightComparator: Query<Type>;
+};
 
-export const and = <Type extends Schema>(
-    leftComparator: Comparator<Type>,
-    rightComparator: Comparator<Type>,
-): And<Type> => ({
+export const and = <Type extends Schema>(leftComparator: Query<Type>, rightComparator: Query<Type>): And<Type> => ({
     kind: 'and',
     leftComparator,
     rightComparator,
 });
 
-type Or<Type extends Schema> = LogicalComparator<Type>;
+type Or<Type extends Schema> = {
+    kind: 'or';
+    leftComparator: Query<Type>;
+    rightComparator: Query<Type>;
+};
 
-export const or = <Type extends Schema>(
-    leftComparator: Comparator<Type>,
-    rightComparator: Comparator<Type>,
-): Or<Type> => ({
+export const or = <Type extends Schema>(leftComparator: Query<Type>, rightComparator: Query<Type>): Or<Type> => ({
     kind: 'or',
     leftComparator,
     rightComparator,
 });
 
-type Operations<Type extends Schema> = Equal<Type> | Greater<Type> | Less<Type> | And<Type> | Or<Type>;
+export type Query<Type extends Schema> = Equal<Type> | Greater<Type> | Less<Type> | And<Type> | Or<Type>;
 
-export type Query<Type extends Schema> = Operations<Type>;
