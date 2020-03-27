@@ -1,5 +1,5 @@
 import { Schema } from './schema';
-import { Query, equal } from './query';
+import { Query } from './query';
 
 export default interface Transaction<Type extends Schema> {
     find(item: Type): Promise<Type | null>;
