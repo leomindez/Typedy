@@ -27,14 +27,14 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
     }
 
     async insert(item: Type): Promise<Type> {
-        await this.documentClient
+        const { Attributes: result } = await this.documentClient
             .put({
                 TableName: this.configuration.table,
                 Item: item,
+                ReturnValues: 'ALL_OLD',
             })
             .promise();
-
-        return item;
+        return result as Type;
     }
 
     update(): Promise<Type> {

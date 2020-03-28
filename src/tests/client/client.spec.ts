@@ -36,11 +36,13 @@ describe('TypedDB Client', () => {
     });
 
     test('should insert new item in table', async () => {
-        documentClient.put = jest.fn();
-
         const item = { id: '1223345', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
+
+        documentClient.put = sinon.stub().callsFake(() => ({
+            promise: sinon.stub().resolves({ Attributes: item }),
+        }));
+
         const result = client.insert(item);
-        expect(documentClient.put).toBeCalled();
         expect(result).toBeDefined();
     });
 });
