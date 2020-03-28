@@ -1,10 +1,12 @@
 import { Schema } from './schema';
 import { Query } from './query';
 
-export default interface Transaction<Type extends Schema> {
-    find(item: Type): Promise<Type | null>;
-    insert(item: Type, conditions: Query<Type>): Promise<Type>;
-    update(item: Type, conditions: Query<Type>): Promise<Type>;
-    query(query: Query<Type>): Promise<Array<Type> | null>;
-    delete(item: Type, conditions: Query<Type>): Promise<void>;
+export default interface Transaction<Item extends Schema> {
+    findById(item: FindById<Item>): Promise<Item | null>;
+    insert(item: Item, conditions: Query<Item>): Promise<Item>;
+    update(item: Item, conditions: Query<Item>): Promise<Item>;
+    query(query: Query<Item>): Promise<Array<Item> | null>;
+    delete(item: Item, conditions: Query<Item>): Promise<void>;
 }
+
+export type FindById<Type extends Schema> = Pick<Type, 'id'>;
