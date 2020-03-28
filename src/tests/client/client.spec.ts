@@ -9,6 +9,7 @@ describe('TypedDB Client', () => {
     let documentClient: DocumentClient;
     let configuration: Configuration;
     let client: Client<Schema>;
+
     beforeAll(() => {
         configuration = {
             table: 'TestsTable',
@@ -30,8 +31,16 @@ describe('TypedDB Client', () => {
         documentClient.get = sinon.stub().callsFake(() => ({
             promise: sinon.stub().resolves({ Item: null }),
         }));
-        const client = new Client<Schema>(configuration, documentClient);
         const item = await client.findById({ id: '12345' });
         expect(item).toBeNull();
+    });
+
+    test('should insert new item in table', async () => {
+        documentClient.put = jest.fn();
+
+        const item = { id: '1223345', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
+        const result = client.insert(item);
+        expect(documentClient.put).toBeCalled();
+        expect(result).toBeDefined();
     });
 });

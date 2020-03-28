@@ -26,8 +26,15 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
         return result as Type;
     }
 
-    insert(): Promise<Type> {
-        throw new Error('Method not implemented.');
+    async insert(item: Type): Promise<Type> {
+        await this.documentClient
+            .put({
+                TableName: this.configuration.table,
+                Item: item,
+            })
+            .promise();
+
+        return item;
     }
 
     update(): Promise<Type> {
