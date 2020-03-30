@@ -61,3 +61,22 @@ export const or = <Type extends Schema>(leftComparator: Query<Type>, rightCompar
 });
 
 export type Query<Type extends Schema> = Equal<Type> | Greater<Type> | Less<Type> | And<Type> | Or<Type>;
+
+export type ToInterpretQuery = {
+    <T extends Schema>(query: Query<T>): string;
+};
+
+export const interpretQuery: ToInterpretQuery = <Type extends Schema>(query: Query<Type>): string => {
+    switch (query.kind) {
+        case 'equal':
+            return `${query.key} = ${query.value}`;
+        case 'greater':
+            return `${query.key} > ${query.value}`;
+        case 'less':
+            return `${query.key} < ${query.value}`;
+        case 'and':
+            return `${interpretQuery(query.leftComparator)} and ${interpretQuery(query.rightComparator)}`;
+        case 'or':
+            return `${interpretQuery(query.leftComparator)} or ${interpretQuery(query.rightComparator)}`;
+    }
+};
