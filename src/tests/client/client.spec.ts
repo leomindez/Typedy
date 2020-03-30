@@ -45,4 +45,15 @@ describe('TypedDB Client', () => {
         const result = client.insert(item);
         expect(result).toBeDefined();
     });
+
+    test('should update item in table', async () => {
+        const item = { id: '1223335', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
+
+        documentClient.update = sinon.stub().callsFake(() => ({
+            promise: sinon.stub().resolves({ Attributes: item }),
+        }));
+
+        const result = client.update({ id: '1223335' }, item);
+        expect(result).toBeDefined();
+    });
 });
