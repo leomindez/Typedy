@@ -2,7 +2,7 @@ import { Schema } from './schema';
 import { Query } from './query';
 
 export default interface Transaction<Item extends Schema> {
-    findById(item: Id<Item>): Promise<Item | null>;
+    findById(id: Id<Item>): Promise<Item | null>;
     insert(item: Item, conditions: Query<Item>): Promise<Item>;
     update(id: Id<Item>, item: UpdateItem<Item>, conditions: Query<Item>): Promise<Item>;
     query(query: Query<Item>): Promise<Array<Item> | null>;
