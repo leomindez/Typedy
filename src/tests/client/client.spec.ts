@@ -54,7 +54,7 @@ describe('TypedDB Client', () => {
             promise: sinon.stub().resolves({ Attributes: item }),
         }));
 
-        const result = client.update({ id: '1223335' }, item);
+        const result = client.update({ id: '1223335' });
         expect(result).toBeDefined();
     });
 
@@ -78,11 +78,12 @@ describe('TypedDB Client', () => {
         expect(result).toBeDefined();
     });
 
-    test('should delete an element by id', async()=> {
-        const id = {id: "123456"}
+    test('should delete an element by id', async () => {
+        const id = { id: '123456' };
         documentClient.delete = sinon.stub().callsFake(() => ({
-            promise: sinon.stub().resolves({ Key: id }),
+            promise: sinon.stub().resolves({ Attributes: id }),
         }));
-        await client.delete(id)
-    })
+        const result = await client.delete(id);
+        expect(result).toBeDefined();
+    });
 });

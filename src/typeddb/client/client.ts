@@ -43,14 +43,15 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
         return result as Type;
     }
 
-    async update(id: Id<Type>, item: UpdateItem<Type>): Promise<Type> {
+    async update(item: Type): Promise<Type> {
+        const updateItem: UpdateItem<Type> = item;
         const { Attributes: result } = await this.documentClient
             .update({
                 TableName: this.configuration.table,
-                Key: id,
+                Key: { id: item.id },
                 UpdateExpression: this.createUpdateExpression(item),
-                ExpressionAttributeNames: this.createExpressionAttributeNames<UpdateItem<Type>>(item),
-                ExpressionAttributeValues: this.createExpressioAttributeValues<UpdateItem<Type>>(item),
+                ExpressionAttributeNames: this.createExpressionAttributeNames<UpdateItem<Type>>(updateItem),
+                ExpressionAttributeValues: this.createExpressioAttributeValues<UpdateItem<Type>>(updateItem),
                 ReturnValues: 'ALL_NEW',
             })
             .promise();
@@ -75,13 +76,15 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
         return result as Type[];
     }
 
-    async delete(id: Id<Type>): Promise<void> {
-        await this.documentClient
+    async delete(id: Id<Type>): Promise<Type> {
+       const { Attributes: result } = await this.documentClient
             .delete({
                 TableName: this.configuration.table,
                 Key: id,
+                ReturnValues: "ALL_OLD"
             })
             .promise();
+        return result as Type
     }
 
     private createUpdateExpression(item: UpdateItem<Type>): UpdateExpression {
