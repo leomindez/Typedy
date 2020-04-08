@@ -75,8 +75,13 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
         return result as Type[];
     }
 
-    delete(): Promise<void> {
-        throw new Error('Method not implemented.');
+    async delete(id: Id<Type>): Promise<void> {
+        await this.documentClient
+            .delete({
+                TableName: this.configuration.table,
+                Key: id,
+            })
+            .promise();
     }
 
     private createUpdateExpression(item: UpdateItem<Type>): UpdateExpression {

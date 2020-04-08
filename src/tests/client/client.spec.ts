@@ -1,9 +1,9 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import sinon from 'sinon';
+
 import { Configuration } from '../../typeddb/configuration';
 import Client from '../../typeddb/client/client';
-
 import { Schema } from '../../typeddb/schema';
-import sinon from 'sinon';
 import { equal, and, greater, Query, less, or } from '../../typeddb/query';
 
 describe('TypedDB Client', () => {
@@ -77,4 +77,12 @@ describe('TypedDB Client', () => {
         const result = await client.query(andLogicalQuery);
         expect(result).toBeDefined();
     });
+
+    test('should delete an element by id', async()=> {
+        const id = {id: "123456"}
+        documentClient.delete = sinon.stub().callsFake(() => ({
+            promise: sinon.stub().resolves({ Key: id }),
+        }));
+        await client.delete(id)
+    })
 });
