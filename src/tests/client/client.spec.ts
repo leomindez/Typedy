@@ -2,8 +2,9 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { Configuration } from '../../typeddb/configuration';
 import Client from '../../typeddb/client/client';
 
-import { Schema } from 'typeddb/schema';
+import { Schema } from '../../typeddb/schema';
 import sinon from 'sinon';
+import { equal, and, greater, Query, less, or } from '../../typeddb/query';
 
 describe('TypedDB Client', () => {
     let documentClient: DocumentClient;
@@ -54,6 +55,26 @@ describe('TypedDB Client', () => {
         }));
 
         const result = client.update({ id: '1223335' }, item);
+        expect(result).toBeDefined();
+    });
+
+    test('should return and object from and query', async () => {
+        const item = { id: '1223335', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
+        const andLogicalQuery: Query<Schema> = and(equal('id', '2939939394'), greater('updatedAt', '18/02/2020'));
+        documentClient.scan = sinon.stub().callsFake(() => ({
+            promise: sinon.stub().resolves({ Items: [item] }),
+        }));
+        const result = await client.query(andLogicalQuery);
+        expect(result).toBeDefined();
+    });
+
+    test('should return and object from or query', async () => {
+        const item = { id: '1223335', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
+        const andLogicalQuery: Query<Schema> = or(less('id', '2939939394'), greater('updatedAt', '18/02/2020'));
+        documentClient.scan = sinon.stub().callsFake(() => ({
+            promise: sinon.stub().resolves({ Items: [item] }),
+        }));
+        const result = await client.query(andLogicalQuery);
         expect(result).toBeDefined();
     });
 });

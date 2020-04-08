@@ -5,9 +5,10 @@ import {
     ExpressionAttributeValueMap,
 } from 'aws-sdk/clients/dynamodb';
 
-import Transaction, { Id, UpdateItem } from 'typeddb/transaction';
-import { Schema } from 'typeddb/schema';
-import { Configuration } from 'typeddb/configuration';
+import Transaction, { Id, UpdateItem } from '../transaction';
+import { Schema } from '../schema';
+import { Configuration } from '../configuration';
+import { Query, interpretQuery, QueryItem } from '../query';
 
 export default class Client<Type extends Schema> implements Transaction<Type> {
     private configuration: Configuration;
@@ -57,8 +58,21 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
         return result as Type;
     }
 
-    query(): Promise<Type[] | null> {
-        throw new Error('Method not implemented.');
+    async query(query: Query<Type>): Promise<Type[] | null> {
+        const queryItem = interpretQuery(query);
+        const { Items: result } = await this.documentClient
+            .scan({
+                TableName: this.configuration.table,
+                FilterExpression: this.createFilterExpression(queryItem),
+                ExpressionAttributeNames: this.createExpressionAttributeNames(
+                    this.createObjectFromQueryItem(queryItem),
+                ),
+                ExpressionAttributeValues: this.createExpressioAttributeValues(
+                    this.createObjectFromQueryItem(queryItem),
+                ),
+            })
+            .promise();
+        return result as Type[];
     }
 
     delete(): Promise<void> {
@@ -67,6 +81,35 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
 
     private createUpdateExpression(item: UpdateItem<Type>): UpdateExpression {
         return `set ${Object.keys(item).reduce((acc, key) => acc + `#${key} = :${key}, `, '')}`;
+    }
+
+    private createFilterExpression(queryItem: QueryItem<Type>): string | undefined {
+        switch (queryItem.operation) {
+            case '=':
+                return `${queryItem.rightValue} = :${queryItem.rightValue}`;
+            case '>':
+                return `${queryItem.rightValue} > :${queryItem.rightValue}`;
+            case '<':
+                return `${queryItem.rightValue} < :${queryItem.rightValue}`;
+            case 'and':
+                return `${this.createFilterExpression(
+                    queryItem.leftValue as QueryItem<Type>,
+                )} and ${this.createFilterExpression(queryItem.rightValue as QueryItem<Type>)}`;
+            case 'or':
+                return `${this.createFilterExpression(
+                    queryItem.leftValue as QueryItem<Type>,
+                )} or ${this.createFilterExpression(queryItem.rightValue as QueryItem<Type>)}`;
+        }
+    }
+
+    private createObjectFromQueryItem(queryItem: QueryItem<Type>): object {
+        if (typeof queryItem.leftValue === 'string' || typeof queryItem.rightValue === 'string') {
+            return { [`${queryItem.leftValue}`]: queryItem.rightValue };
+        }
+        return Object.assign(
+            this.createObjectFromQueryItem(queryItem.leftValue as QueryItem<Type>),
+            this.createObjectFromQueryItem(queryItem.rightValue as QueryItem<Type>),
+        );
     }
 
     private createExpressionAttributeNames<Item>(item: Item): ExpressionAttributeNameMap {
