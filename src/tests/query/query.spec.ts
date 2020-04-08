@@ -40,33 +40,41 @@ describe('Query Type', () => {
         expect(orLogicalQuery.rightComparator.kind).toEqual('greater');
     });
 
-    test('should return equal string', () => {
+    test('should return equal query item', () => {
         const equalQuery = equal('id', '12345');
         const equalStringQuery = interpretQuery(equalQuery);
-        expect(equalStringQuery).toEqual('id = 12345');
+        expect(equalStringQuery).toEqual({ operation: '=', leftValue: 'id', rightValue: '12345' });
     });
 
-    test('should return greater string', () => {
+    test('should return greater query item', () => {
         const greaterQuery = greater('id', '12345');
         const greaterStringQuery = interpretQuery(greaterQuery);
-        expect(greaterStringQuery).toEqual('id > 12345');
+        expect(greaterStringQuery).toEqual({ operation: '>', leftValue: 'id', rightValue: '12345' });
     });
 
-    test('should return less string', () => {
+    test('should return less query item', () => {
         const lessQuery = less('id', '12345');
         const lessStringQuery = interpretQuery(lessQuery);
-        expect(lessStringQuery).toEqual('id < 12345');
+        expect(lessStringQuery).toEqual({ operation: '<', leftValue: 'id', rightValue: '12345' });
     });
 
-    test('should return and string', () => {
+    test('should return and query item', () => {
         const andLogicalQuery: Query<Schema> = and(equal('id', '2939939394'), greater('updatedAt', '18/02/2020'));
         const andStringQuery = interpretQuery(andLogicalQuery);
-        expect(andStringQuery).toEqual('id = 2939939394 and updatedAt > 18/02/2020');
+        expect(andStringQuery).toEqual({
+            operation: 'and',
+            leftValue: { operation: '=', leftValue: 'id', rightValue: '2939939394' },
+            rightValue: { operation: '>', leftValue: 'updatedAt', rightValue: '18/02/2020' },
+        });
     });
 
-    test('should return or string', () => {
+    test('should return or query item', () => {
         const orLogicalQuery: Query<Schema> = or(less('updatedAt', '23/03/2020'), greater('updatedAt', '18/02/2020'));
         const orStringQuery = interpretQuery(orLogicalQuery);
-        expect(orStringQuery).toEqual('updatedAt < 23/03/2020 or updatedAt > 18/02/2020');
+        expect(orStringQuery).toEqual({
+            operation: 'or',
+            leftValue: { operation: '<', leftValue: 'updatedAt', rightValue: '23/03/2020' },
+            rightValue: { operation: '>', leftValue: 'updatedAt', rightValue: '18/02/2020' },
+        });
     });
 });

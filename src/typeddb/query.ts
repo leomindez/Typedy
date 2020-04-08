@@ -62,21 +62,35 @@ export const or = <Type extends Schema>(leftComparator: Query<Type>, rightCompar
 
 export type Query<Type extends Schema> = Equal<Type> | Greater<Type> | Less<Type> | And<Type> | Or<Type>;
 
-export type ToInterpretQuery = {
-    <T extends Schema>(query: Query<T>): string;
+export type QueryItem<Type extends Schema> = {
+    operation: string;
+    leftValue: keyof Type | QueryItem<Type>;
+    rightValue: Type[keyof Type] | QueryItem<Type>;
 };
 
-export const interpretQuery: ToInterpretQuery = <Type extends Schema>(query: Query<Type>): string => {
+export type ToInterpretQuery = {
+    <T extends Schema>(query: Query<T>): QueryItem<T>;
+};
+
+export const interpretQuery: ToInterpretQuery = <Type extends Schema>(query: Query<Type>): QueryItem<Type> => {
     switch (query.kind) {
         case 'equal':
-            return `${query.key} = ${query.value}`;
+            return { operation: '=', leftValue: query.key, rightValue: query.value };
         case 'greater':
-            return `${query.key} > ${query.value}`;
+            return { operation: '>', leftValue: query.key, rightValue: query.value };
         case 'less':
-            return `${query.key} < ${query.value}`;
+            return { operation: '<', leftValue: query.key, rightValue: query.value };
         case 'and':
-            return `${interpretQuery(query.leftComparator)} and ${interpretQuery(query.rightComparator)}`;
+            return {
+                operation: 'and',
+                rightValue: interpretQuery(query.rightComparator),
+                leftValue: interpretQuery(query.leftComparator),
+            };
         case 'or':
-            return `${interpretQuery(query.leftComparator)} or ${interpretQuery(query.rightComparator)}`;
+            return {
+                operation: 'or',
+                rightValue: interpretQuery(query.rightComparator),
+                leftValue: interpretQuery(query.leftComparator),
+            };
     }
 };
