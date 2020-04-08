@@ -9,13 +9,13 @@ Add configuration to use the client.
 Configuration is an object to handle all the possible options to use DynamoDB
 
 ```
-const config = {
+const configuration = {
     table: "TableName", 
     idPrefix: "Tbl", 
     options: { apiVersion: '2012-08-10' }
 }
 ```
-*Make sure all entities need to extend Schema type to automatically create id, createdAt and updatedAt fields.*
+*All entities need to extend Schema type to automatically create id, createdAt and updatedAt fields.*
 
 Use the client class to handle transaction operations. 
 
