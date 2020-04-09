@@ -61,3 +61,36 @@ export const or = <Type extends Schema>(leftComparator: Query<Type>, rightCompar
 });
 
 export type Query<Type extends Schema> = Equal<Type> | Greater<Type> | Less<Type> | And<Type> | Or<Type>;
+
+export type QueryItem<Type extends Schema> = {
+    operation: string;
+    leftValue: keyof Type | QueryItem<Type>;
+    rightValue: Type[keyof Type] | QueryItem<Type>;
+};
+
+export type ToInterpretQuery = {
+    <T extends Schema>(query: Query<T>): QueryItem<T>;
+};
+
+export const interpretQuery: ToInterpretQuery = <Type extends Schema>(query: Query<Type>): QueryItem<Type> => {
+    switch (query.kind) {
+        case 'equal':
+            return { operation: '=', leftValue: query.key, rightValue: query.value };
+        case 'greater':
+            return { operation: '>', leftValue: query.key, rightValue: query.value };
+        case 'less':
+            return { operation: '<', leftValue: query.key, rightValue: query.value };
+        case 'and':
+            return {
+                operation: 'and',
+                rightValue: interpretQuery(query.rightComparator),
+                leftValue: interpretQuery(query.leftComparator),
+            };
+        case 'or':
+            return {
+                operation: 'or',
+                rightValue: interpretQuery(query.rightComparator),
+                leftValue: interpretQuery(query.leftComparator),
+            };
+    }
+};
