@@ -75,8 +75,9 @@ TypedDB includes a minimal query dsl, it includes 5 basic operations:
 * or
   
 ```
-const query: Query<Schema> = or(less('updatedAt', '23/03/2020'), greater('updatedAt', '18/02/2020'));
-const items = await client.query(query)
+const queryBuilder = new QueryBuilder().build(or(less('updatedAt', '23/03/2020'), greater('updatedAt', '18/02/2020')));
+const queryExpression = queryBuilder.getQueryExpression();
+const items = await client.query(queryExpression)
 ```
 
 ### Delete item by id

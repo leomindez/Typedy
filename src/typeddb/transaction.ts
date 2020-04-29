@@ -1,11 +1,11 @@
 import { Schema } from './schema';
-import { Query } from './query';
+import { Query, QueryExpression } from './query/query';
 
 export default interface Transaction<Item extends Schema> {
     findById(id: Id<Item>): Promise<Item | null>;
     insert(item: Item, conditions: Query<Item>): Promise<Item>;
     update(id: Id<Item>, item: UpdateItem<Item>, conditions: Query<Item>): Promise<Item>;
-    query(query: Query<Item>): Promise<Array<Item> | null>;
+    query(query: QueryExpression): Promise<Array<Item> | null>;
     delete(id: Id<Item>): Promise<Item>;
 }
 
