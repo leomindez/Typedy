@@ -14,6 +14,7 @@ describe('TypedDB Client', () => {
 
     beforeAll(() => {
         configuration = {
+            idPrefix: "TST",
             table: 'TestsTable',
         };
         documentClient = sinon.createStubInstance(DocumentClient);

@@ -4,11 +4,13 @@ import {
     ExpressionAttributeNameMap,
     ExpressionAttributeValueMap,
 } from 'aws-sdk/clients/dynamodb';
+import { v4 as uuid } from 'uuid';
 
 import Transaction, { Id, UpdateItem } from '../transaction';
 import { Schema } from '../schema';
 import { Configuration } from '../configuration';
 import { QueryExpression } from '../query/query';
+import { type } from 'os';
 
 export default class Client<Type extends Schema> implements Transaction<Type> {
     private configuration: Configuration;
@@ -30,6 +32,7 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
     }
 
     async insert(item: Type): Promise<Type> {
+        item = this.generateId(item);
         const { Attributes: result } = await this.documentClient
             .put({
                 TableName: this.configuration.table,
@@ -77,6 +80,17 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
             })
             .promise();
         return result as Type;
+    }
+
+    private generateId(item: Type): Type {
+        const uuidOptions = {
+            random: [0x10, 0x91, 0x56, 0xbe, 0xc4, 0xfb, 0xc1, 0xea, 0x71, 0xb4, 0xef, 0xe1, 0x67, 0x1c, 0x58, 0x36],
+        };
+        if (this.configuration.idPrefix !== undefined && typeof this.configuration.idPrefix === "string") {
+            item.id = `${this.configuration.idPrefix}-${uuid()}`;
+        }
+        item.id = uuid(uuidOptions);
+        return item;
     }
 
     private createUpdateExpression(item: UpdateItem<Type>): UpdateExpression {
