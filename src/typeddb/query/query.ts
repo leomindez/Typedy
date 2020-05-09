@@ -64,5 +64,5 @@ export type Query<Type extends Schema> = Equal<Type> | Greater<Type> | Less<Type
 
 export type QueryExpression = {
     query: string;
-    expression: object | undefined;
+    expressionAttribute: object | undefined;
 };

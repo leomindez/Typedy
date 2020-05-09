@@ -3,51 +3,47 @@ import { greater, equal, or, and, less } from '../../typeddb/query/query';
 
 describe('Query Builder class', () => {
     test('should return equal query expression', () => {
-        const queryBuilder = new QueryBuilder().build(equal('id', '28812882'));
-        const equalQueryExpression = queryBuilder.getQueryExpression();
+        const equalQueryExpression = new QueryBuilder().expression(equal('id', '28812882')).build();
         expect(equalQueryExpression.query).toBeDefined();
-        expect(equalQueryExpression.expression).toBeDefined();
+        expect(equalQueryExpression.expressionAttribute).toBeDefined();
         expect(equalQueryExpression.query).toEqual('id = :id');
-        expect(equalQueryExpression.expression).toEqual({ id: '28812882' });
+        expect(equalQueryExpression.expressionAttribute).toEqual({ id: '28812882' });
     });
 
     test('should return greater query expression', () => {
-        const queryBuilder = new QueryBuilder().build(greater('createdAt', '28812882'));
-        const greaterQueryExpression = queryBuilder.getQueryExpression();
+        const greaterQueryExpression = new QueryBuilder().expression(greater('createdAt', '28812882')).build();
         expect(greaterQueryExpression.query).toBeDefined();
-        expect(greaterQueryExpression.expression).toBeDefined();
+        expect(greaterQueryExpression.expressionAttribute).toBeDefined();
         expect(greaterQueryExpression.query).toEqual('createdAt > :createdAt');
-        expect(greaterQueryExpression.expression).toEqual({ createdAt: '28812882' });
+        expect(greaterQueryExpression.expressionAttribute).toEqual({ createdAt: '28812882' });
     });
 
     test('should return less query expression', () => {
-        const queryBuilder = new QueryBuilder().build(less('updatedAt', '28812882'));
-        const lessQueryExpression = queryBuilder.getQueryExpression();
+        const lessQueryExpression = new QueryBuilder().expression(less('updatedAt', '28812882')).build();
         expect(lessQueryExpression.query).toBeDefined();
-        expect(lessQueryExpression.expression).toBeDefined();
+        expect(lessQueryExpression.expressionAttribute).toBeDefined();
         expect(lessQueryExpression.query).toEqual('updatedAt < :updatedAt');
-        expect(lessQueryExpression.expression).toEqual({ updatedAt: '28812882' });
+        expect(lessQueryExpression.expressionAttribute).toEqual({ updatedAt: '28812882' });
     });
 
     test('should return and query expression', () => {
-        const queryBuilder = new QueryBuilder().build(
+        const andQueryExpression = new QueryBuilder().expression(
             and(equal('updatedAt', '28812882'), greater('createdAt', '28838384')),
-        );
-        const andQueryExpression = queryBuilder.getQueryExpression();
+        ).build();
+        console.log(andQueryExpression)
         expect(andQueryExpression.query).toBeDefined();
-        expect(andQueryExpression.expression).toBeDefined();
+        expect(andQueryExpression.expressionAttribute).toBeDefined();
         expect(andQueryExpression.query).toEqual('updatedAt = :updatedAt and createdAt > :createdAt');
-        expect(andQueryExpression.expression).toEqual({ createdAt: '28838384', updatedAt: '28812882' });
+        expect(andQueryExpression.expressionAttribute).toEqual({ createdAt: '28838384', updatedAt: '28812882' });
     });
 
     test('should return or query expression', () => {
-        const queryBuilder = new QueryBuilder().build(
+        const orQueryExpression = new QueryBuilder().expression(
             or(equal('updatedAt', '28812882'), greater('createdAt', '28838384')),
-        );
-        const orQueryExpression = queryBuilder.getQueryExpression();
+        ).build();
         expect(orQueryExpression.query).toBeDefined();
-        expect(orQueryExpression.expression).toBeDefined();
+        expect(orQueryExpression.expressionAttribute).toBeDefined();
         expect(orQueryExpression.query).toEqual('updatedAt = :updatedAt or createdAt > :createdAt');
-        expect(orQueryExpression.expression).toEqual({ createdAt: '28838384', updatedAt: '28812882' });
+        expect(orQueryExpression.expressionAttribute).toEqual({ createdAt: '28838384', updatedAt: '28812882' });
     });
 });

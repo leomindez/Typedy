@@ -3,18 +3,19 @@ import { Query, QueryExpression } from '../query/query';
 
 export default class QueryBuilder<Type extends Schema> {
     private queryString = '';
-    private expression: object | undefined = {};
+    private queryExpression: object | undefined = {};
 
-    build(query: Query<Type>): this {
+    expression(query: Query<Type>): this {
         this.queryString = `${this.queryString}${this.interpretQuery(query)}`;
-        this.expression = this.interpretExpression(query);
+        this.queryExpression = this.interpretExpression(query);
+        console.log(this.queryExpression)
         return this;
     }
 
-    getQueryExpression(): QueryExpression {
+    build(): QueryExpression {
         return {
             query: this.queryString,
-            expression: this.expression,
+            expressionAttribute: this.queryExpression,
         };
     }
 
@@ -36,20 +37,20 @@ export default class QueryBuilder<Type extends Schema> {
     private interpretExpression<Type extends Schema>(query: Query<Type>): object | undefined {
         switch (query.kind) {
             case 'equal':
-                return { ...this.expression, [`${query.key}`]: query.value };
+                return { ...this.queryExpression, [`${query.key}`]: query.value };
             case 'greater':
-                return { ...this.expression, [`${query.key}`]: query.value };
+                return { ...this.queryExpression, [`${query.key}`]: query.value };
             case 'less':
-                return { ...this.expression, [`${query.key}`]: query.value };
+                return { ...this.queryExpression, [`${query.key}`]: query.value };
             case 'and':
                 return Object.assign(
-                    this.expression,
+                    this.queryExpression,
                     this.interpretExpression(query.left),
                     this.interpretExpression(query.right),
                 );
             case 'or':
                 return Object.assign(
-                    this.expression,
+                    this.queryExpression,
                     this.interpretExpression(query.left),
                     this.interpretExpression(query.right),
                 );

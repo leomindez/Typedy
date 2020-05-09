@@ -14,7 +14,7 @@ describe('TypedDB Client', () => {
 
     beforeAll(() => {
         configuration = {
-            idPrefix: "TST",
+            idPrefix: 'TST',
             table: 'TestsTable',
         };
         documentClient = sinon.createStubInstance(DocumentClient);
@@ -38,7 +38,7 @@ describe('TypedDB Client', () => {
         expect(item).toBeNull();
     });
 
-    test('should insert new item in table', async () => {
+    test('should insert new item and autogenate string id', async () => {
         const item = { id: '1223345', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
 
         documentClient.put = sinon.stub().callsFake(() => ({
@@ -49,6 +49,18 @@ describe('TypedDB Client', () => {
         expect(result).toBeDefined();
     });
 
+    test('should insert new item and autogenate number id', async () => {
+        const item = { id: '1223345', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
+
+        documentClient.put = sinon.stub().callsFake(() => ({
+            promise: sinon.stub().resolves({ Attributes: item }),
+        }));
+        const client = new Client({table: 'TestsTable'}, documentClient)
+        const result = client.insert(item);
+        expect(result).toBeDefined();
+    });
+    
+
     test('should update item in table', async () => {
         const item = { id: '1223335', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
 
@@ -56,27 +68,25 @@ describe('TypedDB Client', () => {
             promise: sinon.stub().resolves({ Attributes: item }),
         }));
 
-        const result = client.update({ id: '1223335' });
+        const result = client.update(item);
         expect(result).toBeDefined();
     });
 
     test('should return and object from and query', async () => {
         const item = { id: '1223335', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
-        const queryBuilder = new QueryBuilder().build(and(equal('id', '1223335'), greater('updatedAt', '27/02/2020')));
-        const queryExpression = queryBuilder.getQueryExpression();
+        const query = new QueryBuilder().expression(and(equal('id', '1223335'), greater('updatedAt', '27/02/2020'))).build();
         documentClient.scan = sinon.stub().callsFake(() => ({
             promise: sinon.stub().resolves({ Items: [item] }),
         }));
-        const result = await client.query(queryExpression);
+        const result = await client.query(query);
         expect(result).toBeDefined();
     });
 
     test('should delete an element by id', async () => {
-        const id = { id: '123456' };
         documentClient.delete = sinon.stub().callsFake(() => ({
-            promise: sinon.stub().resolves({ Attributes: id }),
+            promise: sinon.stub().resolves({ Attributes: '' }),
         }));
-        const result = await client.delete(id);
+        const result = await client.delete({ id: '123456' });
         expect(result).toBeDefined();
     });
 });
