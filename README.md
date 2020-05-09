@@ -75,8 +75,7 @@ TypedDB includes a minimal query dsl, it includes 5 basic operations:
 * or
   
 ```
-const queryBuilder = new QueryBuilder().build(or(less('updatedAt', '23/03/2020'), greater('updatedAt', '18/02/2020')));
-const queryExpression = queryBuilder.getQueryExpression();
+const queryExpression = new QueryBuilder().expression(greater('createdAt', '28812882')).build();
 const items = await client.query(queryExpression)
 ```
 
