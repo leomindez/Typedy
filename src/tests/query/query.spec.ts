@@ -1,5 +1,5 @@
-import { Schema } from '../../typeddb/schema';
-import { Query, equal, greater, less, and, or } from '../../typeddb/query/query';
+import { Schema } from '../../typedy/schema';
+import { Query, equal, greater, less, and, or } from '../../typedy/query/query';
 
 describe('Query Type', () => {
     test('should return equals comparator structure', () => {
