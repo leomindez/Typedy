@@ -55,11 +55,10 @@ describe('TypedDB Client', () => {
         documentClient.put = sinon.stub().callsFake(() => ({
             promise: sinon.stub().resolves({ Attributes: item }),
         }));
-        const client = new Client({table: 'TestsTable'}, documentClient)
+        const client = new Client({ table: 'TestsTable' }, documentClient);
         const result = client.insert(item);
         expect(result).toBeDefined();
     });
-    
 
     test('should update item in table', async () => {
         const item = { id: '1223335', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
@@ -74,7 +73,9 @@ describe('TypedDB Client', () => {
 
     test('should return and object from and query', async () => {
         const item = { id: '1223335', createdAt: '27/02/2020', updatedAt: '27/02/2020' };
-        const query = new QueryBuilder().expression(and(equal('id', '1223335'), greater('updatedAt', '27/02/2020'))).build();
+        const query = new QueryBuilder()
+            .expression(and(equal('id', '1223335'), greater('updatedAt', '27/02/2020')))
+            .build();
         documentClient.scan = sinon.stub().callsFake(() => ({
             promise: sinon.stub().resolves({ Items: [item] }),
         }));

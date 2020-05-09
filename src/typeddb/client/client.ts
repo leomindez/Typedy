@@ -33,6 +33,7 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
 
     async insert(item: Type): Promise<Type> {
         item = this.generateId(item);
+        item = this.appendCreatedAtDate(item);
         const { Attributes: result } = await this.documentClient
             .put({
                 TableName: this.configuration.table,
@@ -44,7 +45,8 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
     }
 
     async update(item: Type): Promise<Type> {
-        const updatedItem: UpdateItem<Type> = omit(item, "id")
+        let updatedItem: UpdateItem<Type> = omit(item, 'id');
+        updatedItem = this.appendUpdatedAtDate(updatedItem);
         const { Attributes: result } = await this.documentClient
             .update({
                 TableName: this.configuration.table,
@@ -90,6 +92,16 @@ export default class Client<Type extends Schema> implements Transaction<Type> {
             item.id = `${this.configuration.idPrefix}-${uuid()}`;
         }
         item.id = uuid(uuidOptions);
+        return item;
+    }
+
+    private appendCreatedAtDate(item: Type): Type {
+        item.createdAt = Date.now();
+        return item;
+    }
+
+    private appendUpdatedAtDate(item: UpdateItem<Type>): UpdateItem<Type> {
+        item.updatedAt = Date.now();
         return item;
     }
 

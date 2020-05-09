@@ -8,7 +8,6 @@ export default class QueryBuilder<Type extends Schema> {
     expression(query: Query<Type>): this {
         this.queryString = `${this.queryString}${this.interpretQuery(query)}`;
         this.queryExpression = this.interpretExpression(query);
-        console.log(this.queryExpression)
         return this;
     }
 
