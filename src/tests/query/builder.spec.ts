@@ -27,10 +27,9 @@ describe('Query Builder class', () => {
     });
 
     test('should return and query expression', () => {
-        const andQueryExpression = new QueryBuilder().expression(
-            and(equal('updatedAt', '28812882'), greater('createdAt', '28838384')),
-        ).build();
-        console.log(andQueryExpression)
+        const andQueryExpression = new QueryBuilder()
+            .expression(and(equal('updatedAt', '28812882'), greater('createdAt', '28838384')))
+            .build();
         expect(andQueryExpression.query).toBeDefined();
         expect(andQueryExpression.expressionAttribute).toBeDefined();
         expect(andQueryExpression.query).toEqual('updatedAt = :updatedAt and createdAt > :createdAt');
@@ -38,9 +37,9 @@ describe('Query Builder class', () => {
     });
 
     test('should return or query expression', () => {
-        const orQueryExpression = new QueryBuilder().expression(
-            or(equal('updatedAt', '28812882'), greater('createdAt', '28838384')),
-        ).build();
+        const orQueryExpression = new QueryBuilder()
+            .expression(or(equal('updatedAt', '28812882'), greater('createdAt', '28838384')))
+            .build();
         expect(orQueryExpression.query).toBeDefined();
         expect(orQueryExpression.expressionAttribute).toBeDefined();
         expect(orQueryExpression.query).toEqual('updatedAt = :updatedAt or createdAt > :createdAt');
