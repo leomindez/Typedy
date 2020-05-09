@@ -1,6 +1,6 @@
-# TypedDB
+# Typedy
 
-TypedDB is a tiny client for DynamoDB. 
+Typedy is a tiny client for DynamoDB. 
 
 ### Usage
 
@@ -66,7 +66,7 @@ const item = await client.update({
 
 ### Query items
 
-TypedDB includes a minimal query dsl, it includes 5 basic operations: 
+Typedy includes a minimal query dsl, it includes 5 basic operations: 
 
 * equal
 * less

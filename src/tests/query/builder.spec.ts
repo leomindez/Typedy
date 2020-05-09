@@ -1,5 +1,5 @@
-import QueryBuilder from '../../typeddb/query/builder';
-import { greater, equal, or, and, less } from '../../typeddb/query/query';
+import QueryBuilder from '../../typedy/query/builder';
+import { greater, equal, or, and, less } from '../../typedy/query/query';
 
 describe('Query Builder class', () => {
     test('should return equal query expression', () => {

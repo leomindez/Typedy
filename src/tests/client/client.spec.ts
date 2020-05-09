@@ -1,11 +1,11 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import sinon from 'sinon';
 
-import { Configuration } from '../../typeddb/configuration';
-import Client from '../../typeddb/client/client';
-import { Schema } from '../../typeddb/schema';
-import { equal, and, greater } from '../../typeddb/query/query';
-import QueryBuilder from '../../typeddb/query/builder';
+import { Configuration } from '../../typedy/configuration';
+import Client from '../../typedy/client/client';
+import { Schema } from '../../typedy/schema';
+import { equal, and, greater } from '../../typedy/query/query';
+import QueryBuilder from '../../typedy/query/builder';
 
 describe('TypedDB Client', () => {
     let documentClient: DocumentClient;

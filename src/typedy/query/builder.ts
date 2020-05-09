@@ -1,5 +1,5 @@
 import { Schema } from '../schema';
-import { Query, QueryExpression } from '../query/query';
+import { Query, QueryExpression } from './query';
 
 export default class QueryBuilder<Type extends Schema> {
     private queryString = '';
