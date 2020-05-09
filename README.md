@@ -1,6 +1,6 @@
 # Typedy
 
-Typedy is a tiny client for DynamoDB. 
+Typedy is a tiny typescript client for DynamoDB. 
 
 ### Usage
 
